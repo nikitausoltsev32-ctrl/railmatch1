@@ -1,0 +1,252 @@
+// Prisma Schema for RailMatch MVP
+// Railway logistics marketplace connecting operators and seekers
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  ADMIN
+  OPERATOR  // Railway operator
+  SEEKER    // Cargo seeker
+}
+
+enum DealStatus {
+  PENDING
+  NEGOTIATING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+enum WagonType {
+  TANK
+  HOPPER
+  FLATCAR
+  BOXCAR
+  GONDOLA
+  REFRIGERATOR
+  PLATFORM
+}
+
+enum CargoType {
+  COAL
+  OIL
+  GRAIN
+  METAL
+  CHEMICAL
+  TIMBER
+  CONTAINER
+  BULK
+  OTHER
+}
+
+enum MatchStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  role      UserRole
+  companyId Int?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Restrict)
+
+  createdOffers   Offer[]   @relation("OfferCreator")
+  createdRequests Request[] @relation("RequestCreator")
+  sentMessages    Message[] @relation("MessageSender")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([email])
+}
+
+model Company {
+  id          Int      @id @default(autoincrement())
+  name        String
+  inn         String   @unique
+  description String?
+  isOperator  Boolean  @default(false)
+  isSeeker    Boolean  @default(false)
+
+  users               User[]
+  offers              Offer[]
+  requests            Request[]
+  analyticsSnapshots  AnalyticsSnapshot[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isOperator, isSeeker])
+}
+
+model Offer {
+  id                Int        @id @default(autoincrement())
+  companyId         Int
+  company           Company    @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  createdById       Int
+  createdBy         User       @relation("OfferCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  
+  wagonType         WagonType
+  cargoType         CargoType
+  wagonCount        Int
+  departureStation  String
+  departureRegion   String
+  arrivalStation    String
+  arrivalRegion     String
+  availableFrom     DateTime
+  availableUntil    DateTime
+  pricePerWagon     Float
+  description       String?
+
+  matches           Match[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([wagonType, cargoType])
+  @@index([departureRegion, arrivalRegion])
+  @@index([availableFrom, availableUntil])
+  @@index([companyId])
+}
+
+model Request {
+  id                Int        @id @default(autoincrement())
+  companyId         Int
+  company           Company    @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  createdById       Int
+  createdBy         User       @relation("RequestCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  
+  cargoType         CargoType
+  wagonType         WagonType?
+  cargoWeight       Float
+  departureStation  String
+  departureRegion   String
+  arrivalStation    String
+  arrivalRegion     String
+  loadingDate       DateTime
+  requiredByDate    DateTime
+  maxPricePerWagon  Float?
+  description       String?
+
+  matches              Match[]
+  threads              Thread[]
+  dealStatusHistories  DealStatusHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cargoType, wagonType])
+  @@index([departureRegion, arrivalRegion])
+  @@index([loadingDate, requiredByDate])
+  @@index([companyId])
+}
+
+model Match {
+  id          Int         @id @default(autoincrement())
+  offerId     Int
+  offer       Offer       @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  requestId   Int
+  request     Request     @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  
+  score       Float
+  status      MatchStatus @default(PENDING)
+  metadata    String?     // JSON metadata for match details
+
+  threads              Thread[]
+  dealStatusHistories  DealStatusHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([offerId, requestId])
+  @@index([status, score])
+}
+
+model Thread {
+  id          Int      @id @default(autoincrement())
+  matchId     Int?
+  match       Match?   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  requestId   Int?
+  request     Request? @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  
+  subject     String
+  isActive    Boolean  @default(true)
+
+  messages    Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([matchId])
+  @@index([requestId])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  threadId  Int
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  senderId  Int
+  sender    User     @relation("MessageSender", fields: [senderId], references: [id], onDelete: Restrict)
+  
+  content   String
+  isRead    Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([threadId, createdAt])
+}
+
+model DealStatusHistory {
+  id          Int        @id @default(autoincrement())
+  matchId     Int?
+  match       Match?     @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  requestId   Int?
+  request     Request?   @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  
+  status      DealStatus
+  comment     String?
+
+  createdAt DateTime @default(now())
+
+  @@index([matchId, createdAt])
+  @@index([requestId, createdAt])
+}
+
+model AnalyticsSnapshot {
+  id             Int      @id @default(autoincrement())
+  companyId      Int
+  company        Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  date           DateTime
+  activeOffers   Int      @default(0)
+  activeRequests Int      @default(0)
+  matchesCount   Int      @default(0)
+  dealsCompleted Int      @default(0)
+  revenue        Float    @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@unique([companyId, date])
+  @@index([companyId, date])
+}
