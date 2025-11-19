@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "test:matching": "tsx scripts/test-matching.ts",
+    "recompute-matches": "tsx scripts/recompute-matches.ts",
+    "recompute-matches:verbose": "tsx scripts/recompute-matches.ts --verbose"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
