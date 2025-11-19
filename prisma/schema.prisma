@@ -118,6 +118,7 @@ model Offer {
   availableUntil    DateTime
   pricePerWagon     Float
   description       String?
+  isArchived        Boolean    @default(false)
 
   matches           Match[]
 
@@ -128,6 +129,7 @@ model Offer {
   @@index([departureRegion, arrivalRegion])
   @@index([availableFrom, availableUntil])
   @@index([companyId])
+  @@index([isArchived])
 }
 
 model Request {
