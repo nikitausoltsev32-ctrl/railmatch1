@@ -7,9 +7,9 @@ async function main() {
 
   // Очищаем существующие данные
   console.log('🗑️  Очистка существующих данных...');
+  await prisma.dealStatusHistory.deleteMany();
   await prisma.message.deleteMany();
   await prisma.thread.deleteMany();
-  await prisma.dealStatusHistory.deleteMany();
   await prisma.match.deleteMany();
   await prisma.analyticsSnapshot.deleteMany();
   await prisma.offer.deleteMany();
