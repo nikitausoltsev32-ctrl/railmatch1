@@ -146,10 +146,51 @@ export const copy = {
   },
   seeker: {
     navigation: {
+      browse: 'Каталог предложений',
       requests: 'Мои заявки',
       newRequest: 'Новая заявка',
       matches: 'Совпадения',
       profile: 'Профиль компании',
+    },
+    browse: {
+      title: 'Каталог предложений',
+      subtitle: 'Найдите подходящие предложения вагонов для вашего груза',
+      sorting: {
+        relevance: 'По релевантности',
+        priceAsc: 'Цена (возр.)',
+        priceDesc: 'Цена (убыв.)',
+        newestAvailability: 'Новейшие предложения',
+      },
+      filters: {
+        wagonType: 'Тип вагона',
+        cargoType: 'Тип груза',
+        region: 'Регион',
+        departureRegion: 'Регион отправления',
+        arrivalRegion: 'Регион назначения',
+        dateRange: 'Период доступности',
+        priceRange: 'Диапазон цены',
+        resetFilters: 'Сбросить фильтры',
+      },
+      offerCard: {
+        wagonType: 'Тип вагона',
+        cargoType: 'Груз',
+        route: 'Маршрут',
+        price: 'Цена за вагон',
+        available: 'Доступность',
+        company: 'Компания',
+        wagons: 'Вагонов',
+        viewDetails: 'Просмотреть детали',
+        save: 'Сохранить',
+        contact: 'Связаться',
+      },
+      empty: {
+        title: 'Нет предложений, соответствующих фильтрам',
+        description: 'Попробуйте изменить параметры поиска или сбросить фильтры',
+        resetButton: 'Сбросить фильтры',
+      },
+      loading: {
+        title: 'Загрузка предложений...',
+      },
     },
     requests: {
       title: 'Мои заявки',

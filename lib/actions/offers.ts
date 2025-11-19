@@ -152,3 +152,115 @@ export async function getOffer(id: number) {
     return { success: false, error: 'Failed to fetch offer' };
   }
 }
+
+export async function getCatalogOffers(params: {
+  page?: number;
+  sort?: 'relevance' | 'priceAsc' | 'priceDesc' | 'newest';
+  wagonType?: string;
+  cargoType?: string;
+  departureRegion?: string;
+  arrivalRegion?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  priceMin?: number;
+  priceMax?: number;
+} = {}) {
+  try {
+    const page = Math.max(1, params.page || 1);
+    const pageSize = 20;
+    const skip = (page - 1) * pageSize;
+
+    const where: any = {
+      isArchived: false,
+    };
+
+    if (params.wagonType) {
+      where.wagonType = params.wagonType;
+    }
+
+    if (params.cargoType) {
+      where.cargoType = params.cargoType;
+    }
+
+    if (params.departureRegion) {
+      where.departureRegion = params.departureRegion;
+    }
+
+    if (params.arrivalRegion) {
+      where.arrivalRegion = params.arrivalRegion;
+    }
+
+    if (params.dateFrom || params.dateTo) {
+      where.availableFrom = {};
+      if (params.dateFrom) {
+        try {
+          where.availableFrom.gte = new Date(params.dateFrom);
+        } catch {
+          // Invalid date, skip this filter
+        }
+      }
+      if (params.dateTo) {
+        try {
+          where.availableUntil = where.availableUntil || {};
+          where.availableUntil.lte = new Date(params.dateTo);
+        } catch {
+          // Invalid date, skip this filter
+        }
+      }
+    }
+
+    if (params.priceMin !== undefined || params.priceMax !== undefined) {
+      where.pricePerWagon = {};
+      if (params.priceMin !== undefined) {
+        where.pricePerWagon.gte = params.priceMin;
+      }
+      if (params.priceMax !== undefined) {
+        where.pricePerWagon.lte = params.priceMax;
+      }
+    }
+
+    let orderBy: any = { createdAt: 'desc' };
+
+    if (params.sort === 'priceAsc') {
+      orderBy = { pricePerWagon: 'asc' };
+    } else if (params.sort === 'priceDesc') {
+      orderBy = { pricePerWagon: 'desc' };
+    } else if (params.sort === 'newest') {
+      orderBy = { createdAt: 'desc' };
+    }
+
+    const [offers, total] = await Promise.all([
+      prisma.offer.findMany({
+        where,
+        include: {
+          company: true,
+          createdBy: true,
+        },
+        orderBy,
+        skip,
+        take: pageSize,
+      }),
+      prisma.offer.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / pageSize);
+
+    return {
+      success: true,
+      data: {
+        offers,
+        pagination: {
+          page,
+          pageSize,
+          total,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPrevPage: page > 1,
+        },
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching catalog offers:', error);
+    return { success: false, error: 'Failed to fetch offers' };
+  }
+}
