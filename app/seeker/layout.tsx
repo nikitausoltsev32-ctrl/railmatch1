@@ -49,6 +49,14 @@ export default function SeekerLayout({
             </li>
             <li>
               <a
+                href="/seeker/chat"
+                className="flex items-center px-4 py-2 text-sm font-medium text-neutral-700 rounded-md hover:bg-primary-50 hover:text-primary-600 transition-colors"
+              >
+                {copy.seeker.navigation.chat}
+              </a>
+            </li>
+            <li>
+              <a
                 href="/seeker/profile"
                 className="flex items-center px-4 py-2 text-sm font-medium text-neutral-700 rounded-md hover:bg-primary-50 hover:text-primary-600 transition-colors"
               >
