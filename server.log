@@ -1,0 +1,37 @@
+
+> railmatch@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+  ▲ Next.js 14.2.33
+  - Local:        http://localhost:3001
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1971ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 3.7s (454 modules)
+ GET /seeker/requests 404 in 3843ms
+ GET /seeker/requests 404 in 24ms
+ ✓ Compiled in 541ms (233 modules)
+ ✓ Compiled in 287ms (233 modules)
+ ✓ Compiled in 327ms (233 modules)
+stat '/home/engine/project/.next/server'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/_not-found/page' in /home/engine/project/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/home/engine/project/.next/server/app/_not-found/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/_not-found/page' in '/home/engine/project/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/_not-found/page (expected /home/engine/project/.next/server/app/_not-found/page.js)
+<w>  at file dependencies /home/engine/project/node_modules/next/dist/server/require.js
+<w>  at file /home/engine/project/node_modules/next/dist/server/require.js
+<w>  at file dependencies /home/engine/project/node_modules/next/dist/server/load-components.js
+<w>  at file /home/engine/project/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /home/engine/project/node_modules/next/dist/build/utils.js
+<w>  at file /home/engine/project/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /home/engine/project/node_modules/next/dist/build/webpack/plugins/flight-client-entry-plugin.js
+<w>  at file /home/engine/project/node_modules/next/dist/build/webpack/plugins/flight-client-entry-plugin.js
+<w>  at file dependencies /home/engine/project/node_modules/next/dist/build/webpack-config.js
+<w>  at file /home/engine/project/node_modules/next/dist/build/webpack-config.js
+<w>  at file dependencies /home/engine/project/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at file /home/engine/project/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+<w>  at resolve commonjs /home/engine/project/node_modules/next/dist/build/webpack/loaders/next-swc-loader.js
+ ✓ Compiled in 831ms (234 modules)
+ ✓ Compiled in 287ms (234 modules)
+ ✓ Compiled in 368ms (234 modules)
