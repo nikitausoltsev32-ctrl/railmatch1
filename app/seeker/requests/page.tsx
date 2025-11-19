@@ -187,14 +187,14 @@ function RequestsListContent({ searchParams }: RequestsListProps) {
             label={copy.seeker.requests.filters.status}
             options={statusOptions}
             value={filters.status}
-            onChange={(value) => handleFilterChange('status', value)}
+            onChange={(value: any) => handleFilterChange('status', value)}
           />
 
           <Select
             label={copy.seeker.requests.filters.wagonType}
             options={wagonTypeOptions}
             value={filters.wagonType}
-            onChange={(value) => handleFilterChange('wagonType', value)}
+            onChange={(value: any) => handleFilterChange('wagonType', value)}
           />
 
           <Input

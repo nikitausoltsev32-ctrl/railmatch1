@@ -93,7 +93,7 @@ export default function NewRequestPage() {
             label={copy.seeker.requests.form.cargoType}
             options={cargoTypeOptions}
             value={watch('cargoType')}
-            onChange={(value) => setValue('cargoType', value as any)}
+            onChange={(value: any) => setValue('cargoType', value as any)}
             error={errors.cargoType?.message}
             required
           />
@@ -102,7 +102,7 @@ export default function NewRequestPage() {
             label={copy.seeker.requests.form.wagonType}
             options={wagonTypeOptions}
             value={watch('wagonType') || ''}
-            onChange={(value) => setValue('wagonType', (value || undefined) as any)}
+            onChange={(value: any) => setValue('wagonType', (value || undefined) as any)}
             error={errors.wagonType?.message}
             placeholder="Не указано"
           />

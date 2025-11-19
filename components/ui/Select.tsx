@@ -13,7 +13,7 @@ interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'val
   placeholder?: string;
   children?: ReactNode;
   value?: string | number;
-  onChange?: (value: string) => void;
+  onChange?: ((value: string) => void) | ((event: React.ChangeEvent<HTMLSelectElement>) => void);
 }
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
@@ -22,7 +22,20 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     ref
   ) => {
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      onChange?.(e.target.value);
+      if (onChange) {
+        // Support both React Hook Form and direct value onChange
+        const onChangeAny = onChange as any;
+        // Try to call with both signatures to support both patterns
+        if (typeof onChangeAny === 'function') {
+          try {
+            // First try React Hook Form pattern (expects event)
+            onChangeAny(e);
+          } catch {
+            // If that fails, try direct value pattern
+            onChangeAny(e.target.value);
+          }
+        }
+      }
     };
 
     return (
