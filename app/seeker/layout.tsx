@@ -33,10 +33,10 @@ export default function SeekerLayout({
             </li>
             <li>
               <a
-                href="/seeker/requests/new"
+                href="/seeker/inbox"
                 className="flex items-center px-4 py-2 text-sm font-medium text-neutral-700 rounded-md hover:bg-primary-50 hover:text-primary-600 transition-colors"
               >
-                {copy.seeker.navigation.newRequest}
+                {copy.seeker.navigation.inbox}
               </a>
             </li>
             <li>
