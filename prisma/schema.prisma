@@ -73,6 +73,8 @@ model User {
   createdOffers   Offer[]   @relation("OfferCreator")
   createdRequests Request[] @relation("RequestCreator")
   sentMessages    Message[] @relation("MessageSender")
+  operatorThreads Thread[]  @relation("ThreadOperator")
+  seekerThreads   Thread[]  @relation("ThreadSeeker")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -192,8 +194,14 @@ model Thread {
   requestId   Int?
   request     Request? @relation(fields: [requestId], references: [id], onDelete: Cascade)
   
+  operatorId  Int?
+  operator    User?    @relation("ThreadOperator", fields: [operatorId], references: [id], onDelete: Restrict)
+  seekerId    Int?
+  seeker      User?    @relation("ThreadSeeker", fields: [seekerId], references: [id], onDelete: Restrict)
+  
   subject     String
   isActive    Boolean  @default(true)
+  lastReadAt  String?  // JSON string tracking per-user read timestamps {userId: ISO8601}
 
   messages    Message[]
 
@@ -202,17 +210,20 @@ model Thread {
 
   @@index([matchId])
   @@index([requestId])
+  @@index([operatorId])
+  @@index([seekerId])
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
-  threadId  Int
-  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  senderId  Int
-  sender    User     @relation("MessageSender", fields: [senderId], references: [id], onDelete: Restrict)
+  id          Int      @id @default(autoincrement())
+  threadId    Int
+  thread      Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  senderId    Int
+  sender      User     @relation("MessageSender", fields: [senderId], references: [id], onDelete: Restrict)
   
-  content   String
-  isRead    Boolean  @default(false)
+  content     String
+  attachments String?  // JSON array of FileAttachment objects
+  isRead      Boolean  @default(false)
 
   createdAt DateTime @default(now())
 

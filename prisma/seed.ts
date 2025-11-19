@@ -248,7 +248,13 @@ async function main() {
     data: {
       matchId: match1.id,
       subject: 'Обсуждение перевозки металлопроката',
+      operatorId: operatorUser2.id,
+      seekerId: seekerUser1.id,
       isActive: true,
+      lastReadAt: JSON.stringify({
+        [operatorUser2.id]: new Date().toISOString(),
+        [seekerUser1.id]: new Date(Date.now() - 300000).toISOString(), // 5 minutes ago
+      }),
     },
   });
 
@@ -274,7 +280,15 @@ async function main() {
     data: {
       threadId: thread1.id,
       senderId: seekerUser1.id,
-      content: 'Нам нужно уточнить даты погрузки и возможность предоставления документов.',
+      content: 'Нам нужно уточнить даты погрузки и возможность предоставления документов. Прикрепляю ТЗ для оценки.',
+      attachments: JSON.stringify([
+        {
+          filename: 'Техническое_задание.pdf',
+          size: 1024000,
+          mimeType: 'application/pdf',
+          storagePath: '/uploads/chat/Техническое_задание_1700000000000_abc123.pdf',
+        }
+      ]),
       isRead: false,
     },
   });
@@ -283,7 +297,12 @@ async function main() {
     data: {
       requestId: request2.id,
       subject: 'Вопрос по заявке на уголь',
+      operatorId: operatorUser1.id,
+      seekerId: seekerUser1.id,
       isActive: true,
+      lastReadAt: JSON.stringify({
+        [operatorUser1.id]: new Date().toISOString(),
+      }),
     },
   });
 
